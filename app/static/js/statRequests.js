@@ -1,7 +1,7 @@
 window.onload = function(){ 
 
 	//JCH TODO: load heros from 'ref/heros.json' instead of this hardcode
-	json = {
+	var json = {
 	    "status": 200, 
 	    "count": 113, 
 	    "heroes": [
@@ -1025,7 +1025,30 @@ window.onload = function(){
 	    ]
 	}
 
-	heros = json["heroes"];
+	var heros = json["heroes"];
+	var options_list = _
+		.chain(heros)
+		.map(function(x){
+			return _.pick(x, ['id','localized_name']);
+		})
+		.orderBy('localized_name','asc')
+		.value();
+
+	var dropdowns_to_populate = [
+		"#hero1_dropdown",
+		"#hero2_dropdown",
+		"#hero3_dropdown",
+		"#hero4_dropdown",
+		"#hero5_dropdown"
+	];
+
+	_.each(dropdowns_to_populate, function(dropdown){
+		var dropdown_to_populate = $(dropdown);
+		_.each(options_list, function(hero) {
+    		dropdown_to_populate.append($("<option />").val(hero["id"]).text(hero["localized_name"]));
+		});	
+	});
+	
 
 	get_vert_url_by_id = function(hero_id){ 
 	    url = _
@@ -1038,14 +1061,13 @@ window.onload = function(){
 			})
 			.value();
 
-		return url[0]; //this is annoying and flummoxing
+		return url[0]; //this is annoying and flummoxing, i can't do the [0] in the _.map() function
 	}
 
-	get_hero_input_value = function(hero_input){
-		id = '#' + hero_input + '_input';
-		var hero_input_value = $(id).val();
-
-		return parseInt(hero_input_value);
+	get_hero_dropdown_value = function(hero_slot){
+		id = '#' + hero_slot + '_dropdown';
+		var hero_dropdown_value = $(id).val();
+		return parseInt(hero_dropdown_value);
 	}
 
 	update_hero_portrait = function(hero_slot, url){
@@ -1054,11 +1076,11 @@ window.onload = function(){
 	}
 
 	get_ally_picks = function(){
-		var hero1_id = $('#hero1_input').val();
-		var hero2_id = $('#hero2_input').val();
-		var hero3_id = $('#hero3_input').val();
-		var hero4_id = $('#hero4_input').val();
-		var hero5_id = $('#hero5_input').val();
+		var hero1_id = $('#hero1_dropdown').val();
+		var hero2_id = $('#hero2_dropdown').val();
+		var hero3_id = $('#hero3_dropdown').val();
+		var hero4_id = $('#hero4_dropdown').val();
+		var hero5_id = $('#hero5_dropdown').val();
 		
 		ally_picks = [hero1_id, hero2_id, hero3_id, hero4_id, hero5_id];
 		ally_picks = _.without(ally_picks, "");
@@ -1074,39 +1096,39 @@ window.onload = function(){
 		console.log(ally_picks);
 	}
 
-	hero1_button.onclick = function(){
-	    hero_slot = "hero1";
-	    hero_id = get_hero_input_value(hero_slot);
-	    hero_vert_url = get_vert_url_by_id(hero_id);
-	    update_hero_portrait(hero_slot, hero_vert_url);
+	hero1_dropdown.onchange = function(){
+		hero_slot = "hero1";
+		hero_id = get_hero_dropdown_value(hero_slot);
+		hero_vert_url = get_vert_url_by_id(hero_id);
+		update_hero_portrait(hero_slot, hero_vert_url);
 	};
 
-	hero2_button.onclick = function(){
-	    hero_slot = "hero2";
-	    hero_id = get_hero_input_value(hero_slot);
-	    hero_vert_url = get_vert_url_by_id(hero_id);
-	    update_hero_portrait(hero_slot, hero_vert_url);
+	hero2_dropdown.onchange = function(){
+		hero_slot = "hero2";
+		hero_id = get_hero_dropdown_value(hero_slot);
+		hero_vert_url = get_vert_url_by_id(hero_id);
+		update_hero_portrait(hero_slot, hero_vert_url);
 	};
 
-	hero3_button.onclick = function(){
-	    hero_slot = "hero3";
-	    hero_id = get_hero_input_value(hero_slot);
-	    hero_vert_url = get_vert_url_by_id(hero_id);
-	    update_hero_portrait(hero_slot, hero_vert_url);
+	hero3_dropdown.onchange = function(){
+		hero_slot = "hero3";
+		hero_id = get_hero_dropdown_value(hero_slot);
+		hero_vert_url = get_vert_url_by_id(hero_id);
+		update_hero_portrait(hero_slot, hero_vert_url);
 	};
 
-	hero4_button.onclick = function(){
-	    hero_slot = "hero4";
-	    hero_id = get_hero_input_value(hero_slot);
-	    hero_vert_url = get_vert_url_by_id(hero_id);
-	    update_hero_portrait(hero_slot, hero_vert_url);
+	hero4_dropdown.onchange = function(){
+		hero_slot = "hero4";
+		hero_id = get_hero_dropdown_value(hero_slot);
+		hero_vert_url = get_vert_url_by_id(hero_id);
+		update_hero_portrait(hero_slot, hero_vert_url);
 	};
 
-	hero5_button.onclick = function(){
-	    hero_slot = "hero5";
-	    hero_id = get_hero_input_value(hero_slot);
-	    hero_vert_url = get_vert_url_by_id(hero_id);
-	    update_hero_portrait(hero_slot, hero_vert_url);
+	hero5_dropdown.onchange = function(){
+		hero_slot = "hero5";
+		hero_id = get_hero_dropdown_value(hero_slot);
+		hero_vert_url = get_vert_url_by_id(hero_id);
+		update_hero_portrait(hero_slot, hero_vert_url);
 	};
 
 };
