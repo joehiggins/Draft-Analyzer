@@ -1053,8 +1053,57 @@ window.onload = function(){
 		$(id).attr("src",url);
 	}
 
-	hero1_button.onclick = function() {
+	get_ally_picks = function(){
+		var hero1_id = $('#hero1_input').val();
+		var hero2_id = $('#hero2_input').val();
+		var hero3_id = $('#hero3_input').val();
+		var hero4_id = $('#hero4_input').val();
+		var hero5_id = $('#hero5_input').val();
+		
+		ally_picks = [hero1_id, hero2_id, hero3_id, hero4_id, hero5_id];
+		ally_picks = _.without(ally_picks, "");
+		ally_picks = _.map(ally_picks, function(x){
+			return parseInt(x);
+		});
+		
+		return ally_picks;
+	}
+
+	ally_picks_button.onclick = function(){
+		ally_picks = get_ally_picks();
+		console.log(ally_picks);
+	}
+
+	hero1_button.onclick = function(){
 	    hero_slot = "hero1";
+	    hero_id = get_hero_input_value(hero_slot);
+	    hero_vert_url = get_vert_url_by_id(hero_id);
+	    update_hero_portrait(hero_slot, hero_vert_url);
+	};
+
+	hero2_button.onclick = function(){
+	    hero_slot = "hero2";
+	    hero_id = get_hero_input_value(hero_slot);
+	    hero_vert_url = get_vert_url_by_id(hero_id);
+	    update_hero_portrait(hero_slot, hero_vert_url);
+	};
+
+	hero3_button.onclick = function(){
+	    hero_slot = "hero3";
+	    hero_id = get_hero_input_value(hero_slot);
+	    hero_vert_url = get_vert_url_by_id(hero_id);
+	    update_hero_portrait(hero_slot, hero_vert_url);
+	};
+
+	hero4_button.onclick = function(){
+	    hero_slot = "hero4";
+	    hero_id = get_hero_input_value(hero_slot);
+	    hero_vert_url = get_vert_url_by_id(hero_id);
+	    update_hero_portrait(hero_slot, hero_vert_url);
+	};
+
+	hero5_button.onclick = function(){
+	    hero_slot = "hero5";
 	    hero_id = get_hero_input_value(hero_slot);
 	    hero_vert_url = get_vert_url_by_id(hero_id);
 	    update_hero_portrait(hero_slot, hero_vert_url);
