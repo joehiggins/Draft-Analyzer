@@ -1,0 +1,7 @@
+# exclude data
+*.json
+*.pkl
+*.csv
+
+# exclude everything
+Data/Pro Match Details/*
