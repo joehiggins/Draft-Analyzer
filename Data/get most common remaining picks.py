@@ -79,7 +79,7 @@ def find_common_complementary_heros(df, ally_picks, ally_bans, enemy_picks, enem
 
     return common_complementary_heros.most_common(5)
     
-ally_picks = [59,50]#[62, 17]
+ally_picks = [59,50] #[62, 17]
 ally_bans = [100]
 enemy_picks = []
 enemy_bans = []
