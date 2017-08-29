@@ -5,3 +5,5 @@
 
 # exclude everything
 Data/Pro Match Details/*
+flask/Lib/*
+flask/Scripts/*
