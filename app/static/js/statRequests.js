@@ -1026,6 +1026,13 @@ window.onload = function(){
 	}
 
 	var heros = json["heroes"];
+	var options_list = _
+		.chain(heros)
+		.map(function(x){
+			return _.pick(x, ['id','localized_name']);
+		})
+		.orderBy('localized_name','asc')
+		.value();
 
 	var dropdowns_to_populate = [
 		"#hero1_dropdown",
@@ -1037,10 +1044,11 @@ window.onload = function(){
 
 	_.each(dropdowns_to_populate, function(dropdown){
 		var dropdown_to_populate = $(dropdown);
-		_.each(heros, function(hero) {
+		_.each(options_list, function(hero) {
     		dropdown_to_populate.append($("<option />").val(hero["id"]).text(hero["localized_name"]));
 		});	
 	});
+	
 
 	get_vert_url_by_id = function(hero_id){ 
 	    url = _
