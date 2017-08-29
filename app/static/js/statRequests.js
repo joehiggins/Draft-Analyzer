@@ -1072,6 +1072,7 @@ window.onload = function(){
 
 	update_hero_portrait = function(hero_slot, url){
 		id = '#' + hero_slot + '_portrait';
+		url !== undefined ? url = url : url = '/static/img/empty_hero_slot.png'; 
 		$(id).attr("src",url);
 	}
 
