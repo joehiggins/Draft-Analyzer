@@ -7,6 +7,6 @@ Created on Tue Aug 15 15:59:15 2017
 
 from flask import Flask
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-from app import views
+from application import views
