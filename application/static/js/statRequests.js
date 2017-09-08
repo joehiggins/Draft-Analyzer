@@ -1,5 +1,6 @@
-window.onload = function(){ 
-
+	
+window.onload = function(){
+	
 	//JCH TODO: load heros from 'ref/heros.json' instead of this hardcode
 	var json = {
 	    "status": 200, 
@@ -1023,7 +1024,7 @@ window.onload = function(){
 	            "id": 114
 	        }
 	    ]
-	}
+	};
 
 	var heros = json["heroes"];
 	var options_list = _
