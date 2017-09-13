@@ -1027,38 +1027,128 @@ window.onload = function(){
 	};
 
 	var heros = json["heroes"];
-	var options_list = _
-		.chain(heros)
-		.map(function(x){
-			return _.pick(x, ['id','localized_name']);
-		})
-		.orderBy('localized_name','asc')
-		.value();
 
-	var dropdowns_to_populate = [
-		"#hero1_dropdown",
-		"#hero2_dropdown",
-		"#hero3_dropdown",
-		"#hero4_dropdown",
-		"#hero5_dropdown"
+	var available_heros_start =_.chain(heros)
+			.map(function(x){
+				return _.pick(x, ['id','localized_name']);
+			})
+			.orderBy('localized_name','asc')
+			.value();
+
+	//JCH to refactor: dropdown_ids
+	var dropdown_ids = [
+		"#ally_pick1_dropdown",
+		"#ally_pick2_dropdown",
+		"#ally_pick3_dropdown",
+		"#ally_pick4_dropdown",
+		"#ally_pick5_dropdown",
+		"#ally_ban1_dropdown",
+		"#ally_ban2_dropdown",
+		"#ally_ban3_dropdown",
+		"#ally_ban4_dropdown",
+		"#ally_ban5_dropdown",
+		"#enemy_pick1_dropdown",
+		"#enemy_pick2_dropdown",
+		"#enemy_pick3_dropdown",
+		"#enemy_pick4_dropdown",
+		"#enemy_pick5_dropdown",
+		"#enemy_ban1_dropdown",
+		"#enemy_ban2_dropdown",
+		"#enemy_ban3_dropdown",
+		"#enemy_ban4_dropdown",
+		"#enemy_ban5_dropdown"
 	];
 
-	_.each(dropdowns_to_populate, function(dropdown){
-		var dropdown_to_populate = $(dropdown);
-		_.each(options_list, function(hero) {
-    		dropdown_to_populate.append($("<option />").val(hero["id"]).text(hero["localized_name"]));
+	_.each(dropdown_ids, function(dropdown){
+		var dropdown_element = $(dropdown);
+		_.each(available_heros_start, function(hero) {
+    		dropdown_element.append($("<option />").val(hero["id"]).text(hero["localized_name"]));
 		});	
 	});
-	
 
-	get_vert_url_by_id = function(hero_id){ 
-	    url = _
+	//This is a global: it stores the value of the hero about to be changed away in a dropdown
+	var dropdown_prior_value = '';
+
+
+	//JCH for the most part this works, but keep an eye out for bugs in this
+	update_dropdown_options = function(hero_slot){
+
+		var hero_being_changed_from = dropdown_prior_value;
+		var hero_being_changed_to = get_hero_dropdown_value(hero_slot);
+		
+		//don't alter options of the dropdown we are clicking on
+		var dropdowns_to_alter = _.filter(dropdown_ids, function(x){
+			return x !== '#' + hero_slot + '_dropdown';
+		});
+
+		//if we are changing away from a selection to nothing, add hero to other dropdowns
+		if(hero_being_changed_from !== '' && hero_being_changed_to === ''){
+			_.each(dropdowns_to_alter, function(dropdown){
+				//console.log('adding ' + get_localized_name_from_hero_id(hero_being_changed_from) + ' to dropdowns');
+				add_option(dropdown, hero_being_changed_from);
+			});
+		//if we are changing away from a selection to another selection, remove the option 
+		}else if(hero_being_changed_from !== '' && hero_being_changed_to !== ''){
+			_.each(dropdowns_to_alter, function(dropdown){
+				//console.log('adding ' + get_localized_name_from_hero_id(hero_being_changed_from) + ' and removing '+ get_localized_name_from_hero_id(hero_being_changed_to) +' from dropdowns');
+				add_option(dropdown, hero_being_changed_from);
+				remove_option(dropdown, hero_being_changed_to);
+			});
+		//otherwise, remove the selection from other dropdowns
+		}else if(hero_being_changed_from === '' && hero_being_changed_to !== ''){
+			_.each(dropdowns_to_alter, function(dropdown){
+				//console.log('removing '+ get_localized_name_from_hero_id(hero_being_changed_to) +' from dropdowns');
+				remove_option(dropdown, hero_being_changed_to);
+			});		
+		}
+	}
+
+	remove_option = function(dropdown, hero_id){
+		var selector = dropdown + " option[value='" + hero_id + "']";
+		$(selector).remove();
+	}
+
+	add_option = function(dropdown, hero_id){
+		var localized_name = get_localized_name_from_hero_id(hero_id);
+		$(dropdown).append($("<option />").val(hero_id).text(localized_name));
+	}
+
+	alphabetize_dropdown_menu = function(hero_slot){
+		var options = $('#' + hero_slot +'_dropdown option');
+	    var arr = options.map(function(_, o) {
+	        return {
+	            t: $(o).text(),
+	            v: o.value
+	        };
+	    }).get();
+	    arr.sort(function(o1, o2) {
+	        return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0;
+	    });
+	    options.each(function(i, o) {
+	        o.value = arr[i].v;
+	        $(o).text(arr[i].t);
+	    });
+	}
+
+	get_localized_name_from_hero_id = function(hero_id){
+		return _.chain(heros)
+			.filter(function(x){
+				return x['id'] === hero_id;
+			})
+			.map(function(x){
+				return x['localized_name'];
+			})
+			.value();
+	}
+
+	get_url_by_id = function(hero_id, url_type){ 
+	    var url = _
 	   		.chain(heros)
 			.filter(function(x){
 				return x["id"] === hero_id;
 			})
 			.map(function(x){
-				return x["url_vertical_portrait"];
+				return x[url_type];
 			})
 			.value();
 
@@ -1066,71 +1156,402 @@ window.onload = function(){
 	}
 
 	get_hero_dropdown_value = function(hero_slot){
-		id = '#' + hero_slot + '_dropdown';
+		var id = '#' + hero_slot + '_dropdown';
 		var hero_dropdown_value = $(id).val();
-		return parseInt(hero_dropdown_value);
+		var hero_dropdown_int = parseInt(hero_dropdown_value);
+		
+		var result;
+		isNaN(hero_dropdown_int) ? result = '' : result = hero_dropdown_int;
+		return result;
 	}
 
-	update_hero_portrait = function(hero_slot, url){
-		id = '#' + hero_slot + '_portrait';
+	update_vert_portrait = function(hero_slot, url){
+		var id = '#' + hero_slot + '_portrait';
+		url !== undefined ? url = url : url = '/static/img/empty_hero_slot_vert.png'; 
+		$(id).attr("src",url);
+	}
+
+	update_flat_portrait = function(hero_slot, url){
+		var id = '#' + hero_slot + '_portrait';
 		url !== undefined ? url = url : url = '/static/img/empty_hero_slot.png'; 
 		$(id).attr("src",url);
 	}
 
-	get_ally_picks = function(){
-		var hero1_id = $('#hero1_dropdown').val();
-		var hero2_id = $('#hero2_dropdown').val();
-		var hero3_id = $('#hero3_dropdown').val();
-		var hero4_id = $('#hero4_dropdown').val();
-		var hero5_id = $('#hero5_dropdown').val();
+	//JCH todo: update all the jqueries with 'get_hero_dropdown_value' and the like
+	get_selection_group = function(ally_or_enemy, pick_or_ban){
+		var side = ally_or_enemy;
+		var type = pick_or_ban;
+
+		var hero1_id = $('#' + side + '_'+ type +'1_dropdown').val();
+		var hero2_id = $('#' + side + '_'+ type +'2_dropdown').val();
+		var hero3_id = $('#' + side + '_'+ type +'3_dropdown').val();
+		var hero4_id = $('#' + side + '_'+ type +'4_dropdown').val();
+		var hero5_id = $('#' + side + '_'+ type +'5_dropdown').val();
 		
-		ally_picks = [hero1_id, hero2_id, hero3_id, hero4_id, hero5_id];
-		ally_picks = _.without(ally_picks, "");
-		ally_picks = _.map(ally_picks, function(x){
+		var selection_group = [hero1_id, hero2_id, hero3_id, hero4_id, hero5_id];
+		selection_group = _.without(selection_group, "");
+		selection_group = _.map(selection_group, function(x){
 			return parseInt(x);
 		});
 		
-		return ally_picks;
+		return selection_group;
 	}
 
-	ally_picks_button.onclick = function(){
-		ally_picks = get_ally_picks();
-		console.log(ally_picks);
+	//JCH: this could be cleaner, the string parsing isn't pretty. Maybe a table in the future?
+	enable_or_disable_dropdown_onchange = function(hero_slot){
+		var new_value = $('#' + hero_slot +'_dropdown').val();
+		var hero_slot_number = parseInt(hero_slot[hero_slot.length - 1]);
+		var hero_slot_next = hero_slot.replace(/.$/, hero_slot_number + 1);
+		var hero_slot_prev = hero_slot.replace(/.$/, hero_slot_number - 1);
+		
+		var dropdown_next = $('#' + hero_slot_next +'_dropdown');
+		var dropdown_prev = $('#' + hero_slot_prev +'_dropdown');
+
+		if(new_value !== ''){
+			dropdown_next.prop('disabled',false);
+			dropdown_prev.prop('disabled',true);
+		}else if(new_value === ''){
+			dropdown_next.prop('disabled',true);
+			dropdown_prev.prop('disabled',false);
+		}
 	}
 
-	hero1_dropdown.onchange = function(){
-		hero_slot = "hero1";
-		hero_id = get_hero_dropdown_value(hero_slot);
-		hero_vert_url = get_vert_url_by_id(hero_id);
-		update_hero_portrait(hero_slot, hero_vert_url);
+	selection_test_button.onclick = function(){
+		var ally_picks = get_selection_group('ally','pick');
+		var enemy_picks = get_selection_group('enemy','pick');
+		var ally_bans = get_selection_group('ally','ban');
+		var enemy_bans = get_selection_group('enemy','ban');
+
+		$.post('/api/test', {
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
+		}, function(data, err) {
+			console.log(data);
+		})
+	}
+
+	get_suggestions_button.onclick = function(){
+		var ally_picks = get_selection_group('ally','pick');
+
+		$.post('/api/find_team_compositions_with_configuration', {
+			ally_picks: ally_picks
+		}, function(data, err) {
+			var data = JSON.parse(data);
+			
+			var suggestions_to_return = 3;
+			var hero_slots = [1,2,3,4,5];
+			var num_ally_picks = get_selection_group('ally','pick').length
+
+			var hero_slots_to_empty = _.map(Array(num_ally_picks), function(x){
+				return x = undefined;
+			});
+
+			var suggestions = _.chain(data)
+				.take(suggestions_to_return)
+				.map(function(x){
+					return x["combination"];
+				})
+				.map(function(x){
+					return hero_slots_to_empty.concat(x);
+				})
+				.value();
+
+			_.each(suggestions, function(suggestion, i){
+				_.each(hero_slots, function(hero_slot, j){
+					slot = 'ally_pick' + hero_slot + '_suggestion' + (i+1);
+					url = get_url_by_id(suggestion[j], 'url_large_portrait');
+					update_flat_portrait(slot, url);
+				});
+			});
+			
+		})
+	}
+
+	ally_pick1_dropdown.onchange = function(){
+		var hero_slot = "ally_pick1";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
 	};
 
-	hero2_dropdown.onchange = function(){
-		hero_slot = "hero2";
-		hero_id = get_hero_dropdown_value(hero_slot);
-		hero_vert_url = get_vert_url_by_id(hero_id);
-		update_hero_portrait(hero_slot, hero_vert_url);
+	ally_pick2_dropdown.onchange = function(){
+		var hero_slot = "ally_pick2";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
 	};
 
-	hero3_dropdown.onchange = function(){
-		hero_slot = "hero3";
-		hero_id = get_hero_dropdown_value(hero_slot);
-		hero_vert_url = get_vert_url_by_id(hero_id);
-		update_hero_portrait(hero_slot, hero_vert_url);
+	ally_pick3_dropdown.onchange = function(){
+		var hero_slot = "ally_pick3";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
 	};
 
-	hero4_dropdown.onchange = function(){
-		hero_slot = "hero4";
-		hero_id = get_hero_dropdown_value(hero_slot);
-		hero_vert_url = get_vert_url_by_id(hero_id);
-		update_hero_portrait(hero_slot, hero_vert_url);
+	ally_pick4_dropdown.onchange = function(){
+		var hero_slot = "ally_pick4";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
 	};
 
-	hero5_dropdown.onchange = function(){
-		hero_slot = "hero5";
-		hero_id = get_hero_dropdown_value(hero_slot);
-		hero_vert_url = get_vert_url_by_id(hero_id);
-		update_hero_portrait(hero_slot, hero_vert_url);
+	ally_pick5_dropdown.onchange = function(){
+		var hero_slot = "ally_pick5";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_pick1_dropdown.onchange = function(){
+		var hero_slot = "enemy_pick1";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_pick2_dropdown.onchange = function(){
+		var hero_slot = "enemy_pick2";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_pick3_dropdown.onchange = function(){
+		var hero_slot = "enemy_pick3";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_pick4_dropdown.onchange = function(){
+		var hero_slot = "enemy_pick4";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_pick5_dropdown.onchange = function(){
+		var hero_slot = "enemy_pick5";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_vertical_portrait');
+		update_vert_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	ally_ban1_dropdown.onchange = function(){
+		var hero_slot = "ally_ban1";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	ally_ban2_dropdown.onchange = function(){
+		var hero_slot = "ally_ban2";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	ally_ban3_dropdown.onchange = function(){
+		var hero_slot = "ally_ban3";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	ally_ban4_dropdown.onchange = function(){
+		var hero_slot = "ally_ban4";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	ally_ban5_dropdown.onchange = function(){
+		var hero_slot = "ally_ban5";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_ban1_dropdown.onchange = function(){
+		var hero_slot = "enemy_ban1";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_ban2_dropdown.onchange = function(){
+		var hero_slot = "enemy_ban2";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_ban3_dropdown.onchange = function(){
+		var hero_slot = "enemy_ban3";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_ban4_dropdown.onchange = function(){
+		var hero_slot = "enemy_ban4";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	enemy_ban5_dropdown.onchange = function(){
+		var hero_slot = "enemy_ban5";
+		var hero_id = get_hero_dropdown_value(hero_slot);
+		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
+		update_flat_portrait(hero_slot, portrait_url);
+		enable_or_disable_dropdown_onchange(hero_slot);
+		update_dropdown_options(hero_slot);
+	};
+
+	//dropdown_prior_value is a global!
+	ally_pick1_dropdown.onclick = function(){
+		var hero_slot = "ally_pick1";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_pick2_dropdown.onclick = function(){
+		var hero_slot = "ally_pick2";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_pick3_dropdown.onclick = function(){
+		var hero_slot = "ally_pick3";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_pick4_dropdown.onclick = function(){
+		var hero_slot = "ally_pick4";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_pick5_dropdown.onclick = function(){
+		var hero_slot = "ally_pick5";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+
+	enemy_pick1_dropdown.onclick = function(){
+		var hero_slot = "enemy_pick1";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_pick2_dropdown.onclick = function(){
+		var hero_slot = "enemy_pick2";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);		
+	};
+	enemy_pick3_dropdown.onclick = function(){
+		var hero_slot = "enemy_pick3";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_pick4_dropdown.onclick = function(){
+		var hero_slot = "enemy_pick4";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_pick5_dropdown.onclick = function(){
+		var hero_slot = "enemy_pick5";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+
+	ally_ban1_dropdown.onclick = function(){
+		var hero_slot = "ally_ban1";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_ban2_dropdown.onclick = function(){
+		var hero_slot = "ally_ban2";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_ban3_dropdown.onclick = function(){
+		var hero_slot = "ally_ban3";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_ban4_dropdown.onclick = function(){
+		var hero_slot = "ally_ban4";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	ally_ban5_dropdown.onclick = function(){
+		var hero_slot = "ally_ban5";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+
+	enemy_ban1_dropdown.onclick = function(){
+		var hero_slot = "enemy_ban1";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_ban2_dropdown.onclick = function(){
+		var hero_slot = "enemy_ban2";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_ban3_dropdown.onclick = function(){
+		var hero_slot = "enemy_ban3";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_ban4_dropdown.onclick = function(){
+		var hero_slot = "enemy_ban4";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
+	};
+	enemy_ban5_dropdown.onclick = function(){
+		var hero_slot = "enemy_ban5";
+		dropdown_prior_value = get_hero_dropdown_value(hero_slot);
+		alphabetize_dropdown_menu(hero_slot);
 	};
 
 };

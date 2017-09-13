@@ -5,7 +5,7 @@ Created on Mon Aug 14 13:14:28 2017
 @author: Joe
 
 import dota2api
-key = '5D989A156878B820E5B12F288AE45549'
+key = 'xxx'
 api = dota2api.Initialise(key) #python wrapper for official Steam API
 
 #Create a dictionary of heroes
@@ -13,7 +13,7 @@ heroes = api.get_heroes()
 match = api.get_match_details(match_id=1000193456)
 match['picks_bans']
 
-#My Key: 5D989A156878B820E5B12F288AE45549
+#My Key: xxx
 """
 
 import urllib.request
