@@ -2,6 +2,21 @@ body {
     background-color: #4b82bc;
 }
 
-select {
-	width: 235px;
+select:disabled {
+    background: rgba(100, 100, 100, 1);
+    color: rgb(150, 150, 150);
 }
+
+/*
+.ban-img::after {
+  content: " ";
+  z-index: 10;
+  display: block;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(100, 0, 0, 0.5);
+}
+*/

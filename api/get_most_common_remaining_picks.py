@@ -6,15 +6,7 @@ Created on Tue Aug 22 10:29:19 2017
 """
 import pandas as pd
 from collections import Counter
-#import numpy as np
-
-#read data
-file_path = 'C:\\Users\\Joe\\Documents\\Draft Analyzer\\Data\\'
-file_name = 'dota2_pro_match_picks_bans.pkl'
-df = pd.read_pickle(file_path + file_name)
-
-#for now, getting rid of the object list, because its big and takes up memory
-df = df.drop('picks_bans', 1)
+import numpy as np
 
 #Helpers
 def stringify_hero_int_list(hero_int_list):
@@ -33,7 +25,7 @@ def find_team_compositions_with_configuration(df, ally_picks):
     ally_picks = str_listify_hero_int_list(ally_picks)
     for ally_pick in ally_picks:
         df = df[(df.ally_picks_str.str.contains(ally_pick))]
-    
+
     return df
 
 def find_team_compositions_without_picksbans(df, ally_bans, enemy_picks, enemy_bans):    
@@ -78,8 +70,10 @@ def find_common_complementary_heros(df, ally_picks, ally_bans, enemy_picks, enem
         del common_complementary_heros[unavailable_hero]
 
     return common_complementary_heros.most_common(5)
-    
-ally_picks = [59,50] #[62, 17]
+'''    
+#Usage
+
+ally_picks = [59,50]
 ally_bans = [100]
 enemy_picks = []
 enemy_bans = []
@@ -89,3 +83,4 @@ compositions_without_picks_bans = find_team_compositions_without_picksbans(compo
 
 common_compositions_after_picks = find_common_complementary_compositions(compositions_with_configuration, ally_picks)
 common_complementary_heroes = find_common_complementary_heros(compositions_with_configuration, ally_picks, ally_bans, enemy_picks, enemy_bans)
+'''

@@ -1,37 +1,221 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Hi, {{ user.nickname }}!</h1>
-    <p>Welcome to the draft analyzer</p>
-    <div class="container centered">
-    	<div class="row">
-    		
-    		<img class="col-md-2" id="hero1_portrait" src='/static/img/empty_hero_slot.png'></img>
-    		<img class="col-md-2" id="hero2_portrait" src='/static/img/empty_hero_slot.png'></img>
-    		<img class="col-md-2" id="hero3_portrait" src='/static/img/empty_hero_slot.png'></img>
-    		<img class="col-md-2" id="hero4_portrait" src='/static/img/empty_hero_slot.png'></img>
-    		<img class="col-md-2" id="hero5_portrait" src='/static/img/empty_hero_slot.png'></img>
+    <input type="button" id="selection_test_button" value="selection_test">
+    <input type="button" id="get_suggestions_button" value="test_button">
 
-	    </div>
-	    <br>
-	    <div class="row">
-	    	<select id="hero1_dropdown">
-	    		<option value=""></option>
-	    	</select>
-	    	<select id="hero2_dropdown">
-	    		<option value=""></option>
-	    	</select>			
-	    	<select id="hero3_dropdown">
-	    		<option value=""></option>
-	    	</select>
-	    	<select id="hero4_dropdown">
-	    		<option value=""></option>
-	    	</select>
-	    	<select id="hero5_dropdown">
-	    		<option value=""></option>
-	    	</select>
-	    </div>
-	    <div class="row">
-	    	<input type="button" id="ally_picks_button" value="Ally Picks">
-	    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-1 ally-side">
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="ally_ban1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="ally_ban1_dropdown">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="ally_ban2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="ally_ban2_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="ally_ban3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="ally_ban3_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="ally_ban4_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="ally_ban4_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="ally_ban5_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="ally_ban5_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-5 ally-side">
+                <div class="row">
+                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick1_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick2_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick3_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick4_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick5_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                </div>
+                <br>
+                <div class="row">
+                    <select class="col-xs-2" id="ally_pick1_dropdown">
+                        <option value=""></option>
+                    </select>
+                    <select class="col-xs-2" id="ally_pick2_dropdown" disabled>
+                        <option value=""></option>
+                    </select>           
+                    <select class="col-xs-2" id="ally_pick3_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                    <select class="col-xs-2" id="ally_pick4_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                    <select class="col-xs-2" id="ally_pick5_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-xs-5 enemy-side">
+                <div class="row">
+                    <img class="col-xs-2 col-xs-offset-2 pick-or-ban-img" id="enemy_pick1_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick2_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick3_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick4_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick5_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                </div>
+                <br>
+                <div class="row">
+                    <select class="col-xs-2 col-xs-offset-2" id="enemy_pick1_dropdown">
+                        <option value=""></option>
+                    </select>
+                    <select class="col-xs-2" id="enemy_pick2_dropdown" disabled>
+                        <option value=""></option>
+                    </select>           
+                    <select class="col-xs-2" id="enemy_pick3_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                    <select class="col-xs-2" id="enemy_pick4_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                    <select class="col-xs-2" id="enemy_pick5_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-1 enemy-side">
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="enemy_ban1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="enemy_ban1_dropdown">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="enemy_ban2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="enemy_ban2_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="enemy_ban3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="enemy_ban3_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="enemy_ban4_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="enemy_ban4_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="row">
+                    <img class="col-xs-8 col-xs-offset-2 ban-img" id="enemy_ban5_portrait" src='/static/img/empty_hero_slot.png'></img>
+                </div>
+                <div class="row">
+                    <select class="col-xs-8 col-xs-offset-2" id="enemy_ban5_dropdown" disabled>
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div class="col-xs-12">
+        <div class="row">
+            <br>
+        </div>
+    </div>
+
+    <div class="modal-body">                   
+        <div class="row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-5">
+                <img class="col-xs-2 scenario-img" id="ally_pick1_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick2_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick3_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick4_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick5_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+            </div>
+            <!--
+            <div class="col-xs-5">
+                <img class="col-xs-2 col-xs-offset-2 scenario-img" id="enemy_pick1_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick2_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick3_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick4_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick5_suggestion1_portrait" src='/static/img/empty_hero_slot.png'></img>
+            </div>
+            -->
+            <div class="col-xs-1"></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-5">
+                <img class="col-xs-2 scenario-img" id="ally_pick1_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick2_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick3_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick4_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick5_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+            </div>
+            <!--
+            <div class="col-xs-5">
+                <img class="col-xs-2 col-xs-offset-2 scenario-img" id="enemy_pick1_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick2_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick3_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick4_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick5_suggestion2_portrait" src='/static/img/empty_hero_slot.png'></img>
+            </div>
+            -->
+            <div class="col-xs-1"></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-5">
+                <img class="col-xs-2 scenario-img" id="ally_pick1_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick2_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick3_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick4_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="ally_pick5_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+            </div>
+            <!--
+            <div class="col-xs-5">
+                <img class="col-xs-2 col-xs-offset-2 scenario-img" id="enemy_pick1_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick2_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick3_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick4_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick5_suggestion3_portrait" src='/static/img/empty_hero_slot.png'></img>
+            </div>
+            -->
+            <div class="col-xs-1"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}
