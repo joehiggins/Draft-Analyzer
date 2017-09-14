@@ -7,7 +7,15 @@ Created on Tue Aug 22 10:29:19 2017
 import pandas as pd
 from collections import Counter
 import numpy as np
+import json
+'''
+file_path = ''
+file_name = 'from_s3.pkl'
+df = pd.read_pickle(file_path + file_name)
 
+#for now, getting rid of the object list, because its big and takes up memory
+df = df.drop('picks_bans', 1)
+'''
 #Helpers
 def stringify_hero_int_list(hero_int_list):
     return "_" + "_".join(map(str, hero_int_list))+"_"
@@ -61,20 +69,24 @@ def find_common_complementary_heros(df, ally_picks, ally_bans, enemy_picks, enem
 
     flat_list = [hero for ally_picks in df['ally_picks'] for hero in ally_picks]
     common_complementary_heros = Counter(flat_list)
-    
+
     for hero in ally_picks:
         del common_complementary_heros[hero]
 
     unavailable_heros = ally_bans + enemy_picks + enemy_bans
+
     for unavailable_hero in unavailable_heros:
         del common_complementary_heros[unavailable_hero]
-
-    return common_complementary_heros.most_common(5)
-'''    
+        
+    common_complementary_heros = common_complementary_heros.most_common(5)
+    common_complementary_heros = list(map(lambda x: {'hero_id': int(x[0]), 'frequency': int(x[1])}, common_complementary_heros))
+    
+    return common_complementary_heros
+ 
 #Usage
-
-ally_picks = [59,50]
-ally_bans = [100]
+'''
+ally_picks = [59]
+ally_bans = []
 enemy_picks = []
 enemy_bans = []
 
@@ -83,4 +95,5 @@ compositions_without_picks_bans = find_team_compositions_without_picksbans(compo
 
 common_compositions_after_picks = find_common_complementary_compositions(compositions_with_configuration, ally_picks)
 common_complementary_heroes = find_common_complementary_heros(compositions_with_configuration, ally_picks, ally_bans, enemy_picks, enemy_bans)
+
 '''

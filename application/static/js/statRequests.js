@@ -1141,7 +1141,7 @@ window.onload = function(){
 			.value();
 	}
 
-	get_url_by_id = function(hero_id, url_type){ 
+	get_url_by_id = function(hero_id, url_type){
 	    var url = _
 	   		.chain(heros)
 			.filter(function(x){
@@ -1171,9 +1171,15 @@ window.onload = function(){
 		$(id).attr("src",url);
 	}
 
-	update_flat_portrait = function(hero_slot, url){
+	update_ban_portrait = function(hero_slot, url){
 		var id = '#' + hero_slot + '_portrait';
 		url !== undefined ? url = url : url = '/static/img/empty_hero_slot.png'; 
+		$(id).attr("src",url);
+	}
+
+	update_suggestion_portrait = function(hero_slot, url){
+		var id = '#' + hero_slot + '_portrait';
+		url !== undefined ? url = url : url = '/static/img/transparent_flat.png'; 
 		$(id).attr("src",url);
 	}
 
@@ -1234,39 +1240,64 @@ window.onload = function(){
 
 	get_suggestions_button.onclick = function(){
 		var ally_picks = get_selection_group('ally','pick');
+		var enemy_picks = get_selection_group('enemy','pick');
+		var ally_bans = get_selection_group('ally','ban');
+		var enemy_bans = get_selection_group('enemy','ban');
 
 		$.post('/api/find_team_compositions_with_configuration', {
-			ally_picks: ally_picks
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
 		}, function(data, err) {
-			var data = JSON.parse(data);
-			
-			var suggestions_to_return = 3;
-			var hero_slots = [1,2,3,4,5];
-			var num_ally_picks = get_selection_group('ally','pick').length
+				var data = JSON.parse(data);
+				
+				var suggestions_to_return = 3;
+				var hero_slots = [1,2,3,4,5];
+				var num_ally_picks = get_selection_group('ally','pick').length
 
-			var hero_slots_to_empty = _.map(Array(num_ally_picks), function(x){
-				return x = undefined;
+				var hero_slots_to_empty = _.map(Array(num_ally_picks), function(x){
+					return x = undefined;
 			});
 
-			var suggestions = _.chain(data)
-				.take(suggestions_to_return)
-				.map(function(x){
-					return x["combination"];
-				})
-				.map(function(x){
-					return hero_slots_to_empty.concat(x);
-				})
-				.value();
+				var suggestions = _.chain(data)
+					.take(suggestions_to_return)
+					.map(function(x){
+						return x["combination"];
+					})
+					.map(function(x){
+						return hero_slots_to_empty.concat(x);
+					})
+					.value();
 
-			_.each(suggestions, function(suggestion, i){
-				_.each(hero_slots, function(hero_slot, j){
-					slot = 'ally_pick' + hero_slot + '_suggestion' + (i+1);
-					url = get_url_by_id(suggestion[j], 'url_large_portrait');
-					update_flat_portrait(slot, url);
+				_.each(suggestions, function(suggestion, i){
+					_.each(hero_slots, function(hero_slot, j){
+						slot = 'ally_pick' + hero_slot + '_suggestion' + (i+1);
+						url = get_url_by_id(suggestion[j], 'url_large_portrait');
+						update_suggestion_portrait(slot, url);
+					});
+			});
+
+			$.post('/api/find_common_complementary_heros', {
+				ally_picks: ally_picks,
+				enemy_picks: enemy_picks,
+				ally_bans: ally_bans,
+				enemy_bans: enemy_bans
+			}, function(data, err) {
+				var data = JSON.parse(data);
+
+				var common_heros = _.map(data, function(x){
+					return x["hero_id"];
 				});
+
+				_.each(common_heros, function(common_hero, i){
+					slot = 'ally_pick' + (i+1) + '_most_common_with';
+					url = get_url_by_id(common_hero, 'url_vertical_portrait');
+					update_vert_portrait(slot, url);
+				});
+
 			});
-			
-		})
+		});
 	}
 
 	ally_pick1_dropdown.onchange = function(){
@@ -1363,7 +1394,7 @@ window.onload = function(){
 		var hero_slot = "ally_ban1";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1372,7 +1403,7 @@ window.onload = function(){
 		var hero_slot = "ally_ban2";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1381,7 +1412,7 @@ window.onload = function(){
 		var hero_slot = "ally_ban3";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1390,7 +1421,7 @@ window.onload = function(){
 		var hero_slot = "ally_ban4";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1399,7 +1430,7 @@ window.onload = function(){
 		var hero_slot = "ally_ban5";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1408,7 +1439,7 @@ window.onload = function(){
 		var hero_slot = "enemy_ban1";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1417,7 +1448,7 @@ window.onload = function(){
 		var hero_slot = "enemy_ban2";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1426,7 +1457,7 @@ window.onload = function(){
 		var hero_slot = "enemy_ban3";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1435,7 +1466,7 @@ window.onload = function(){
 		var hero_slot = "enemy_ban4";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};
@@ -1444,7 +1475,7 @@ window.onload = function(){
 		var hero_slot = "enemy_ban5";
 		var hero_id = get_hero_dropdown_value(hero_slot);
 		var portrait_url = get_url_by_id(hero_id, 'url_large_portrait');
-		update_flat_portrait(hero_slot, portrait_url);
+		update_ban_portrait(hero_slot, portrait_url);
 		enable_or_disable_dropdown_onchange(hero_slot);
 		update_dropdown_options(hero_slot);
 	};

@@ -7,6 +7,7 @@ Created on Sun Sep 10 17:58:10 2017
 
 import boto3
 import botocore
+#Need to create swapfile on t2.micro EC2, not enough memory otherwise: http://neuralfoundry.com/installing-scrapy-on-amazon-linux/
 import pandas as pd
 import os
 
