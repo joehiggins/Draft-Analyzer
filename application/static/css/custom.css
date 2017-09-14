@@ -1,10 +1,19 @@
 body {
-    background-color: #4b82bc;
+    background:linear-gradient(0deg,rgba(0,0,0,0.85),rgba(0,150,150,0.85)),url(/static/img/dota2_clash_of_heroes_1_redux__by_kunkka-d6hwt2j.jpg);
+    /*background:linear-gradient(0deg,rgba(0,0,0,0.75),rgba(150,150,150,0.75)),url(/static/img/spider_dota_symbol.jpg);*/
+    min-height:100%;
+    background-size:cover;
+    /*background-color: #4b82bc;*/
 }
 
 select:disabled {
     background: rgba(100, 100, 100, 1);
     color: rgb(150, 150, 150);
+}
+
+.results-text {
+    color: white;
+    text-align: right;
 }
 
 /*

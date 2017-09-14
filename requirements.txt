@@ -22,6 +22,7 @@ Jinja2==2.9.6
 jmespath==0.9.3
 MarkupSafe==1.0
 numpy==1.13.1
+pandas==0.20.3
 pbr==3.1.1
 python-dateutil==2.6.1
 python3-openid==3.1.0
