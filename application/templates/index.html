@@ -1,10 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
     
+    <!--
     <input type="button" id="selection_test_button" value=".">
-    <input type="button" id="get_suggestions_button" value="Get suggestions">
+    -->
+    
+    <div class="container-fluid">
+        <div class="col-xs-1">
+            <input type="button" id="get_suggestions_button" value="Go">
+        </div>
+        <div class="col-xs-5">
+        </div>
+        <div class="col-xs-5 col-xs-offset-1">
+        </div>
+    </div>
 
-    <div class="modal-body">
+    <br>
+
+    <div class="container-fluid">
         <div class="row">
             <div class="col-xs-1 ally-side">
                 <div class="row">
@@ -50,11 +63,14 @@
             </div>
             <div class="col-xs-5 ally-side">
                 <div class="row">
-                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick1_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick2_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick3_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick4_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="ally_pick5_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <h1 class="team-name">Allies</h1>
+                </div>
+                <div class="row">
+                    <img class="col-xs-2 pick-img" id="ally_pick1_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="ally_pick2_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="ally_pick3_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="ally_pick4_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="ally_pick5_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
                 </div>
                 <br>
                 <div class="row">
@@ -77,12 +93,15 @@
             </div>
             
             <div class="col-xs-5 enemy-side">
+                <div class="row col-xs-offset-2">
+                    <h1 class="team-name" align="right">Enemies</h1>
+                </div>
                 <div class="row">
-                    <img class="col-xs-2 col-xs-offset-2 pick-or-ban-img" id="enemy_pick1_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick2_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick3_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick4_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
-                    <img class="col-xs-2 pick-or-ban-img" id="enemy_pick5_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 col-xs-offset-2 pick-img" id="enemy_pick1_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="enemy_pick2_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="enemy_pick3_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="enemy_pick4_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
+                    <img class="col-xs-2 pick-img" id="enemy_pick5_portrait" src='/static/img/empty_hero_slot_vert.png'></img>
                 </div>
                 <br>
                 <div class="row">
@@ -154,34 +173,76 @@
         </div>
     </div>
 
-    <div class="modal-body">                   
+
+    <div class="container-fluid">                   
         <div class="row">
-            <div class="col-xs-1">
-                <p class="results-text">Most common 5 heroes played with allied composition:</p>
+            <div class="col-xs-1 col-xs-offset-1">
+                <p class="results-text frequent-hero-text" style="display: none;">Most common 5 heroes played with allied composition (not yet banned/picked):</p>
             </div>
-            <div class="col-xs-5">
+            <div class="col-xs-1 col-xs-offset-5">
+                <p class="results-text frequent-hero-text" style="display: none;">Most common 5 heroes played with enemy composition (not yet banned/picked):</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-1">
                 <img class="col-xs-2 top5-img" id="ally_pick1_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick2_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick3_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick4_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick5_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
+            <div class="col-xs-5 col-xs-offset-1">
+                <img class="col-xs-2 top5-img" id="enemy_pick1_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick2_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick3_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick4_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick5_most_common_with_portrait" src='/static/img/transparent_flat.png'></img>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-xs-1 col-xs-offset-1">
+                <p class="results-text frequent-hero-text" style="display: none;">Most common 5 heroes played against enemy composition (not yet banned/picked):</p>
+            </div>
+            <div class="col-xs-1 col-xs-offset-5">
+                <p class="results-text frequent-hero-text" style="display: none;">Most common 5 heroes played against allied composition (not yet banned/picked):</p>
+            </div>
         </div>
         <div class="row">
-           <div class="col-xs-1">
-                <p class="results-text">Most common 5 heroes played against enemy composition:</p>
-            </div>
-            <div class="col-xs-5">
+            <div class="col-xs-5 col-xs-offset-1">
                 <img class="col-xs-2 top5-img" id="ally_pick1_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick2_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick3_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick4_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 top5-img" id="ally_pick5_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
+            <div class="col-xs-5 col-xs-offset-1">
+                <img class="col-xs-2 top5-img" id="enemy_pick1_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick2_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick3_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick4_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="enemy_pick5_most_common_against_portrait" src='/static/img/transparent_flat.png'></img>
+            </div>
         </div>
+        
+        <!--
         <div class="row">
             <div class="col-xs-1">
                 <p class="results-text">Top 5 heroes by winrate (> 20 games):</p>
+            </div>
+            <div class="col-xs-1 col-xs-offset-5">
+                <p class="results-text">Top 5 heroes by winrate (> 20 games):</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-5">
+                <img class="col-xs-2 top5-img" id="ally_pick1_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="ally_pick2_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="ally_pick3_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="ally_pick4_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 top5-img" id="ally_pick5_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
             <div class="col-xs-5">
                 <img class="col-xs-2 top5-img" id="ally_pick1_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
@@ -191,9 +252,13 @@
                 <img class="col-xs-2 top5-img" id="ally_pick5_win_rate_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
         </div>
+        -->
+        
+        <br>
+
         <div class="row">
             <div class="col-xs-1">
-                <p class="results-text">Composition Suggestion 1:</p>
+                <p class="results-text composition-text" style="display: none;">Lineup 1:</p>
             </div>
             <div class="col-xs-5">
                 <img class="col-xs-2 scenario-img" id="ally_pick1_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
@@ -202,21 +267,23 @@
                 <img class="col-xs-2 scenario-img" id="ally_pick4_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="ally_pick5_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
-            <!--
+            <div class="col-xs-1">
+                <p class="results-text composition-text" style="display: none;">Lineup 1:</p>
+            </div>
             <div class="col-xs-5">
-                <img class="col-xs-2 col-xs-offset-2 scenario-img" id="enemy_pick1_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick1_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick2_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick3_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick4_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick5_suggestion1_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
-            -->
-            <div class="col-xs-1"></div>
         </div>
+
         <br>
+
         <div class="row">
             <div class="col-xs-1">
-                <p class="results-text">Composition Suggestion 2:</p>
+                <p class="results-text composition-text" style="display: none;">Lineup 2:</p>
             </div>
             <div class="col-xs-5">
                 <img class="col-xs-2 scenario-img" id="ally_pick1_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
@@ -225,21 +292,23 @@
                 <img class="col-xs-2 scenario-img" id="ally_pick4_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="ally_pick5_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
-            <!--
+            <div class="col-xs-1">
+                <p class="results-text composition-text" style="display: none;">Lineup 2:</p>
+            </div>
             <div class="col-xs-5">
-                <img class="col-xs-2 col-xs-offset-2 scenario-img" id="enemy_pick1_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick1_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick2_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick3_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick4_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick5_suggestion2_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
-            -->
-            <div class="col-xs-1"></div>
         </div>
+
         <br>
+
         <div class="row">
             <div class="col-xs-1">
-                <p class="results-text">Composition Suggestion 3:</p>
+                <p class="results-text composition-text" style="display: none;">Lineup 3:</p>
             </div>
             <div class="col-xs-5">
                 <img class="col-xs-2 scenario-img" id="ally_pick1_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
@@ -248,16 +317,16 @@
                 <img class="col-xs-2 scenario-img" id="ally_pick4_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="ally_pick5_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
-            <!--
+            <div class="col-xs-1">
+                <p class="results-text composition-text" style="display: none;">Lineup 3:</p>
+            </div>
             <div class="col-xs-5">
-                <img class="col-xs-2 col-xs-offset-2 scenario-img" id="enemy_pick1_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
+                <img class="col-xs-2 scenario-img" id="enemy_pick1_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick2_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick3_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick4_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
                 <img class="col-xs-2 scenario-img" id="enemy_pick5_suggestion3_portrait" src='/static/img/transparent_flat.png'></img>
             </div>
-            -->
-            <div class="col-xs-1"></div>
         </div>
     </div>
 
