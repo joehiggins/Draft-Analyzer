@@ -14,18 +14,26 @@ select:disabled {
 .results-text {
     color: white;
     text-align: right;
+    font-size: 0.90em;
+    margin-bottom: 0px;
 }
 
-/*
-.ban-img::after {
-  content: " ";
-  z-index: 10;
-  display: block;
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: rgba(100, 0, 0, 0.5);
+.frequent-hero-text {
+    white-space: nowrap;
 }
-*/
+
+
+hr {
+  margin-top: 10px; 
+  margin-bottom: 1px;
+}
+
+.pick-img {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.team-name {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
