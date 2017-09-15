@@ -28,11 +28,19 @@ def str_listify_hero_int_list(hero_int_list):
     return list(map(lambda x: "_" + str(x) + "_", hero_int_list))
 
 #Match filters based on picks & bans
-def find_team_compositions_with_configuration(df, ally_picks):
+def find_same_team_compositions_with_configuration(df, ally_picks):
     
     ally_picks = str_listify_hero_int_list(ally_picks)
     for ally_pick in ally_picks:
         df = df[(df.ally_picks_str.str.contains(ally_pick))]
+
+    return df
+
+def find_opposing_team_compositions_with_configuration(df, enemy_picks):
+    
+    enemy_picks = str_listify_hero_int_list(enemy_picks)
+    for enemy_pick in enemy_picks:
+        df = df[(df.enemy_picks_str.str.contains(enemy_pick))]
 
     return df
 
@@ -45,8 +53,9 @@ def find_team_compositions_without_picksbans(df, ally_bans, enemy_picks, enemy_b
     
     return df
 
+
 #Team composition & pick suggestion functions
-def find_common_complementary_compositions(df, ally_picks):
+def find_frequent_complementary_compositions(df, ally_picks):
 
     #Order the list of allied picks, since we are ignoring pick/ban order at the moment
     ally_picks_ordered = list(map(lambda x: sorted(x), df['ally_picks']))
@@ -65,23 +74,25 @@ def find_common_complementary_compositions(df, ally_picks):
     
     return remaining_pick_combinations_hist
 
-def find_common_complementary_heros(df, ally_picks, ally_bans, enemy_picks, enemy_bans):
+def find_most_frequently_played_heros(df, ally_picks, ally_bans, enemy_picks, enemy_bans):
 
     flat_list = [hero for ally_picks in df['ally_picks'] for hero in ally_picks]
-    common_complementary_heros = Counter(flat_list)
+    most_frequently_played_heros = Counter(flat_list)
 
+    #remove picks already made by allied side
     for hero in ally_picks:
-        del common_complementary_heros[hero]
+        del most_frequently_played_heros[hero]
 
     unavailable_heros = ally_bans + enemy_picks + enemy_bans
 
+    #remove picks banned out (should already be taken care of if match list is properly filtered beforehand)
     for unavailable_hero in unavailable_heros:
-        del common_complementary_heros[unavailable_hero]
+        del most_frequently_played_heros[unavailable_hero]
         
-    common_complementary_heros = common_complementary_heros.most_common(5)
-    common_complementary_heros = list(map(lambda x: {'hero_id': int(x[0]), 'frequency': int(x[1])}, common_complementary_heros))
+    most_frequently_played_heros = most_frequently_played_heros.most_common(5)
+    most_frequently_played_heros = list(map(lambda x: {'hero_id': int(x[0]), 'frequency': int(x[1])}, most_frequently_played_heros))
     
-    return common_complementary_heros
+    return most_frequently_played_heros
  
 #Usage
 '''

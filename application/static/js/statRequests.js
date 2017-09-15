@@ -1222,6 +1222,14 @@ window.onload = function(){
 		}
 	}
 
+
+	show= function(class_name){
+	    var elements = $(class_name);
+	    elements.show();
+	}
+
+
+	/*
 	selection_test_button.onclick = function(){
 		var ally_picks = get_selection_group('ally','pick');
 		var enemy_picks = get_selection_group('enemy','pick');
@@ -1237,6 +1245,7 @@ window.onload = function(){
 			console.log(data);
 		})
 	}
+	*/
 
 	get_suggestions_button.onclick = function(){
 		var ally_picks = get_selection_group('ally','pick');
@@ -1244,60 +1253,158 @@ window.onload = function(){
 		var ally_bans = get_selection_group('ally','ban');
 		var enemy_bans = get_selection_group('enemy','ban');
 
-		$.post('/api/find_team_compositions_with_configuration', {
+		$.post('/api/find_frequent_ally_complements', {
 			ally_picks: ally_picks,
 			enemy_picks: enemy_picks,
 			ally_bans: ally_bans,
 			enemy_bans: enemy_bans
 		}, function(data, err) {
-				var data = JSON.parse(data);
-				
-				var suggestions_to_return = 3;
-				var hero_slots = [1,2,3,4,5];
-				var num_ally_picks = get_selection_group('ally','pick').length
+			var data = JSON.parse(data);
 
-				var hero_slots_to_empty = _.map(Array(num_ally_picks), function(x){
-					return x = undefined;
+			var common_heros = _.map(data, function(x){
+				return x["hero_id"];
 			});
 
-				var suggestions = _.chain(data)
-					.take(suggestions_to_return)
-					.map(function(x){
-						return x["combination"];
-					})
-					.map(function(x){
-						return hero_slots_to_empty.concat(x);
-					})
-					.value();
-
-				_.each(suggestions, function(suggestion, i){
-					_.each(hero_slots, function(hero_slot, j){
-						slot = 'ally_pick' + hero_slot + '_suggestion' + (i+1);
-						url = get_url_by_id(suggestion[j], 'url_large_portrait');
-						update_suggestion_portrait(slot, url);
-					});
+			_.each(common_heros, function(common_hero, i){
+				slot = 'ally_pick' + (i+1) + '_most_common_with';
+				url = get_url_by_id(common_hero, 'url_vertical_portrait');
+				update_vert_portrait(slot, url);
 			});
 
-			$.post('/api/find_common_complementary_heros', {
-				ally_picks: ally_picks,
-				enemy_picks: enemy_picks,
-				ally_bans: ally_bans,
-				enemy_bans: enemy_bans
-			}, function(data, err) {
-				var data = JSON.parse(data);
+		});
 
-				var common_heros = _.map(data, function(x){
-					return x["hero_id"];
+		$.post('/api/find_frequent_enemy_complements', {
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
+		}, function(data, err) {
+			var data = JSON.parse(data);
+			console.log(data);
+
+			var common_heros = _.map(data, function(x){
+				return x["hero_id"];
+			});
+
+			_.each(common_heros, function(common_hero, i){
+				slot = 'enemy_pick' + (i+1) + '_most_common_with';
+				url = get_url_by_id(common_hero, 'url_vertical_portrait');
+				update_vert_portrait(slot, url);
+			});
+
+		});
+
+		$.post('/api/find_frequent_ally_counters', {
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
+		}, function(data, err) {
+			var data = JSON.parse(data);
+
+			var common_heros = _.map(data, function(x){
+				return x["hero_id"];
+			});
+
+			_.each(common_heros, function(common_hero, i){
+				slot = 'ally_pick' + (i+1) + '_most_common_against';
+				url = get_url_by_id(common_hero, 'url_vertical_portrait');
+				update_vert_portrait(slot, url);
+			});
+
+		});
+
+		$.post('/api/find_frequent_enemy_counters', {
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
+		}, function(data, err) {
+			var data = JSON.parse(data);
+
+			var common_heros = _.map(data, function(x){
+				return x["hero_id"];
+			});
+
+			_.each(common_heros, function(common_hero, i){
+				slot = 'enemy_pick' + (i+1) + '_most_common_against';
+				url = get_url_by_id(common_hero, 'url_vertical_portrait');
+				update_vert_portrait(slot, url);
+			});
+
+		});
+
+		$.post('/api/find_frequent_ally_compositions', {
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
+		}, function(data, err) {
+			var data = JSON.parse(data);
+			
+			var suggestions_to_return = 3;
+			var hero_slots = [1,2,3,4,5];
+			var num_picks = get_selection_group('ally','pick').length
+
+			var hero_slots_to_empty = _.map(Array(num_picks), function(x){
+				return x = undefined;
+		});
+
+			var suggestions = _.chain(data)
+				.take(suggestions_to_return)
+				.map(function(x){
+					return x["combination"];
+				})
+				.map(function(x){
+					return hero_slots_to_empty.concat(x);
+				})
+				.value();
+
+			_.each(suggestions, function(suggestion, i){
+				_.each(hero_slots, function(hero_slot, j){
+					slot = 'ally_pick' + hero_slot + '_suggestion' + (i+1);
+					url = get_url_by_id(suggestion[j], 'url_large_portrait');
+					update_suggestion_portrait(slot, url);
 				});
-
-				_.each(common_heros, function(common_hero, i){
-					slot = 'ally_pick' + (i+1) + '_most_common_with';
-					url = get_url_by_id(common_hero, 'url_vertical_portrait');
-					update_vert_portrait(slot, url);
-				});
-
 			});
 		});
+
+		$.post('/api/find_frequent_enemy_compositions', {
+			ally_picks: ally_picks,
+			enemy_picks: enemy_picks,
+			ally_bans: ally_bans,
+			enemy_bans: enemy_bans
+		}, function(data, err) {
+			var data = JSON.parse(data);
+			
+			var suggestions_to_return = 3;
+			var hero_slots = [1,2,3,4,5];
+			var num_picks = get_selection_group('enemy','pick').length
+
+			var hero_slots_to_empty = _.map(Array(num_picks), function(x){
+				return x = undefined;
+		});
+
+			var suggestions = _.chain(data)
+				.take(suggestions_to_return)
+				.map(function(x){
+					return x["combination"];
+				})
+				.map(function(x){
+					return hero_slots_to_empty.concat(x);
+				})
+				.value();
+
+			_.each(suggestions, function(suggestion, i){
+				_.each(hero_slots, function(hero_slot, j){
+					slot = 'enemy_pick' + hero_slot + '_suggestion' + (i+1);
+					url = get_url_by_id(suggestion[j], 'url_large_portrait');
+					update_suggestion_portrait(slot, url);
+				});
+			});
+		});
+
+		show('.results-text');
 	}
 
 	ally_pick1_dropdown.onchange = function(){
