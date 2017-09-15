@@ -5,6 +5,8 @@ Created on Tue Aug 15 15:59:15 2017
 @author: Joe
 """
 
+import os
+
 #!flask/bin/python
 from application import application
 if __name__ == '__main__':
