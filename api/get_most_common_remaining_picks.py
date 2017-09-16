@@ -66,8 +66,9 @@ def find_frequent_complementary_compositions(df, ally_picks):
     #group by remaining combinations
     remaining_pick_combinations_str = list(map(stringify_hero_int_list, remaining_pick_combinations))
     remaining_pick_combinations_str = pd.DataFrame(remaining_pick_combinations_str)
+
     remaining_pick_combinations_hist = pd.DataFrame(remaining_pick_combinations_str.groupby(0).agg('size').sort_values(0,ascending=False))
-    
+
     remaining_pick_combinations_hist['combination'] = remaining_pick_combinations_hist.index.copy()
     remaining_pick_combinations_hist['combination'] = list(map(int_listify_hero_string, remaining_pick_combinations_hist['combination']))
     remaining_pick_combinations_hist.rename(columns={0: 'count'}, inplace=True)
@@ -91,7 +92,7 @@ def find_most_frequently_played_heros(df, ally_picks, ally_bans, enemy_picks, en
         
     most_frequently_played_heros = most_frequently_played_heros.most_common(5)
     most_frequently_played_heros = list(map(lambda x: {'hero_id': int(x[0]), 'frequency': int(x[1])}, most_frequently_played_heros))
-    
+
     return most_frequently_played_heros
  
 #Usage
