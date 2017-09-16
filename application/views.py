@@ -60,7 +60,7 @@ def test():
     return test_selection(ally_picks, ally_bans, enemy_picks, enemy_bans)
 
 
-@application.route('/api/find_frequent_ally_complements', methods=['POST'])
+@application.route('/api/find_frequent_ally_with', methods=['POST'])
 def most_frequent_ally_complements():
 
     ally_picks, ally_bans, enemy_picks, enemy_bans = process_pick_inputs(
@@ -82,7 +82,7 @@ def most_frequent_ally_complements():
 
     return json.dumps(frequent_complementary_heros)
 
-@application.route('/api/find_frequent_enemy_complements', methods=['POST'])
+@application.route('/api/find_frequent_enemy_with', methods=['POST'])
 def most_frequent_enemy_complements():
 
     ally_picks, ally_bans, enemy_picks, enemy_bans = process_pick_inputs(
@@ -105,7 +105,7 @@ def most_frequent_enemy_complements():
 
     return json.dumps(frequent_complementary_heros)
 
-@application.route('/api/find_frequent_ally_counters', methods=['POST'])
+@application.route('/api/find_frequent_ally_against', methods=['POST'])
 def most_frequent_ally_counters():
 
     ally_picks, ally_bans, enemy_picks, enemy_bans = process_pick_inputs(
@@ -127,7 +127,7 @@ def most_frequent_ally_counters():
 
     return json.dumps(frequent_counter_heros)
 
-@application.route('/api/find_frequent_enemy_counters', methods=['POST'])
+@application.route('/api/find_frequent_enemy_against', methods=['POST'])
 def most_frequent_enemy_counters():
 
     ally_picks, ally_bans, enemy_picks, enemy_bans = process_pick_inputs(
