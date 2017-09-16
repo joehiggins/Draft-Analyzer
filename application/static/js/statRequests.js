@@ -993,7 +993,7 @@ window.onload = function(){
 	            "name": "npc_dota_hero_winter_wyvern", 
 	            "url_small_portrait": "http://cdn.dota2.com/apps/dota2/images/heroes/winter_wyvern_sb.png", 
 	            "url_large_portrait": "http://cdn.dota2.com/apps/dota2/images/heroes/winter_wyvern_lg.png", 
-	            "url_vertical_portrait": "http://cdn.dota2.com/apps/dota2/images/heroes/ern_vert.jpg", 
+	            "url_vertical_portrait": "http://cdn.dota2.com/apps/dota2/images/heroes/winter_wyvern_vert.jpg", 
 	            "id": 112
 	        }, 
 	        {
