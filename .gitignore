@@ -4,14 +4,10 @@
 
 # exclude everything
 Data/Pro Match Details/*
-flask/Lib/*
-flask/Scripts/*
+flask/*
 
 # Elastic Beanstalk Files
-
 .elasticbeanstalk/*
-
 !.elasticbeanstalk/*.cfg.yml
-
 !.elasticbeanstalk/*.global.yml
 
